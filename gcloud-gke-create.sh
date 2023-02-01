@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 gcloud auth login
 
 # K8s - configure kubectl for my GKE cluster

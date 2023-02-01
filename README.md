@@ -7,7 +7,7 @@
 
 ### Architecture
 
-![](./images/sre-public-labs-obssim.png)
+![arch](./images/sre-public-labs-obssim.png)
 
 ### Learning objectives
 
@@ -19,11 +19,11 @@
 
 ### Pre-requisite knowledge
 
-*	Familiarity with Kubernetes
+* Familiarity with Kubernetes
 
-*	Basic notions on Node.js (JavaScript) programming language
+* Basic notions on Node.js (JavaScript) programming language
 
-*	Good understanding of YAML (Yet Another Markup Language)
+* Good understanding of YAML (Yet Another Markup Language)
 
 ### Kubernetes cluster
 
@@ -48,7 +48,7 @@ In case you use a GCP account for this lab, we provided the Google Kubernetes En
 
 You can create a K8s cluster for this lab with the following commands:
 
-```
+```shell
 gcloud auth login
 gcloud container clusters create cluster-1 --no-enable-autoupgrade --enable-service-externalips --enable-kubernetes-alpha --region=<your_closest_region> --cluster-version=1.23.9-gke.900 --machine-type=e2-standard-2 --monitoring=NONE
 ```
@@ -57,7 +57,7 @@ gcloud container clusters create cluster-1 --no-enable-autoupgrade --enable-serv
 
 You can configure your local `kubectl` environment and credentials with the following command:
 
-```
+```shell
 gcloud container clusters get-credentials cluster-1 --zone <your_closest_region> --project <your_project_id>
 ```
 
@@ -98,7 +98,7 @@ Folder: `monitoring`
 
 The dummy Node.js application is located in this Docker hub [repo](https://hub.docker.com/repository/docker/rod4n4m1/node-api). To deploy this app to your K8s cluster, use the following commands:
 
-```
+```shell
 cd microservices
 ./deploy-app.sh
 ```
@@ -109,7 +109,7 @@ The `deploy-app.sh` script will create a *Deployment* in the `default` namespace
 
 To deploy Prometheus Server, Alertmanager, Grafana, kube-state-metrics, Node exporter, and Blackbox exporter, use the following commands:
 
-```
+```shell
 cd microservices
 ./deploy-monitoring.sh
 ```
@@ -126,7 +126,6 @@ The `deploy-monitoring.sh` script will create the following objects inside the K
 | kube-state-metrics | *kube-system* | `ClusterRole`, `ClusterRoleBinding`, `Deployment`, `ServiceAccount`, and `Service` |
 | | | |
 
-
 ### Configuration
 
 * App runtime config
@@ -135,7 +134,7 @@ This app follows most of the Twelve-Factor App framework, so you can pass enviro
 
 File: **`microservices/k8s/node-api-deployment.yaml`**
 
-```
+```yaml
 env:
   - name: PORT
     value: "8081"
@@ -151,7 +150,7 @@ File: **`monitoring/prom-server/prometheus-configmap.yaml`**
 
 There are two alerts configured for the lab.
 
-```
+```yaml
 groups:
 - name: OBSSIM Alerts
   rules:
@@ -189,7 +188,7 @@ The Prometheus Server configuration is in the `prometheus.yml` section in this m
 
 Global parameters are under the `global` sub-section:
 
-```
+```yaml
 global:
   scrape_interval: 10s
   evaluation_interval: 10s
@@ -197,7 +196,7 @@ global:
 
 Alerting parameters are under the `alerting` sub-section:
 
-```
+```yaml
 alerting:
   alertmanagers:
   - scheme: http
@@ -208,7 +207,7 @@ alerting:
 
 Monitoring targets and their configurations are under the `scrape_configs` sub-section:
 
-```
+```yaml
 scrape_configs:
   # Blackbox exporter section (Static)
   - job_name: 'blackbox-exporter'
@@ -233,14 +232,14 @@ The Alertmanager global configuration is in this manifest file. It's pre-configu
 
 To configure the PagerDuty integration, you need to provide the integration key:
 
-```
+```yaml
 pagerduty_configs:
   - service_key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 To configure the Slack integration, you need to provide the Slack incoming webhook URL and channel name:
 
-```
+```yaml
 slack_configs:
 - api_url: https://hooks.slack.com/services/XXXXXXXXXXX/YYYYYYYYYYY/000000000000000000000000
   channel: '#obssim-demo'
@@ -254,10 +253,9 @@ And you can consult instructions on configuring a Slack incoming webhook at this
 
 File: **`monitoring/grafana/grafana-config.yaml`**
 
-
 The `Grafana` global configuration is described in this manifest file.
 
-```
+```yaml
 prometheus.yaml: |-
   {
       "apiVersion": 1,
