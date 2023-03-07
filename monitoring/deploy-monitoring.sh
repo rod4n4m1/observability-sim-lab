@@ -10,7 +10,13 @@ kubectl create -f prom-server/prometheus-rbac.yaml
 kubectl create -f prom-server/prometheus-configmap.yaml
 
 # Prometheus Server - create a storage StorageClass
-kubectl create -f prom-server/storage-class.yaml
+if [ $1 == "aks" ]; then
+    kubectl create -f prom-server/aks-storage-class.yaml
+elif [ $1 ==  "gke" ]; then 
+    kubectl create -f prom-server/gke-storage-class.yaml
+else
+    echo "Please indicate the cloud provider in the first argument: aks or gke"
+fi
 
 # Prometheus Server - create a persistentVolumeClaim for prometheus
 kubectl create -f prom-server/prometheus-pvc.yaml
@@ -29,8 +35,14 @@ kubectl create -f prom-server/prometheus-service.yaml
 #    --key server.key \
 #    --cert server.crt
 
-# Prometheus Server - Create a basic ingress with external LB
-kubectl create -f prom-server/prometheus-basic-ingress.yaml
+# Prometheus Server - Create a service (basic ingress with external LB or LB only)
+if [ $1 ==  "aks" ]; then
+    kubectl create -f prom-server/prometheus-lb-service.yaml
+elif [ $1 ==  "gke" ]; then 
+    kubectl create -f prom-server/prometheus-basic-ingress.yaml
+else
+    echo "Please indicate the cloud provider in the first argument: aks or gke"
+fi
 
 # K8s - deploy kube-state-metrics
 kubectl apply -f kube-state/
@@ -77,8 +89,15 @@ kubectl create -f grafana/grafana-deployment.yaml
 # Grafana - create service
 kubectl create -f grafana/grafana-service.yaml
 
-# Grafana - create basic ingress
-kubectl create -f grafana/grafana-basic-ingress.yaml
+# Grafana - create basic ingress or LB service
+if [ $1 == "aks" ]; then
+    kubectl create -f grafana/grafana-lb-service.yaml
+elif [ $1 ==  "gke" ]; then 
+    kubectl create -f grafana/grafana-basic-ingress.yaml
+else
+    echo "Please indicate the cloud provider in the first argument: aks or gke"
+fi
+
 
 # Grafana - access UI
 # kubectl -n monitoring port-forward svc/grafana-service 3000:3000
