@@ -56,7 +56,7 @@ data:
         static_configs:
          - targets:
             - https://www.google.com
-            - http://34.151.222.192:60000/fortune
+            - http://35.198.12.48:60000/fortune
             - https://prometheus.io
         relabel_configs:
          - source_labels: [__address__]

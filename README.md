@@ -2,7 +2,7 @@
 
 ## SRE Public Labs - OBSSIM
 
-* Version: `0.1.0`
+* Version: `0.1.1`
 * License: `MIT`
 
 ### Architecture
@@ -27,7 +27,11 @@
 
 ### Kubernetes cluster
 
-This lab runs on any K8s cluster with few adjusts on the ingresses, we recommend using a free trial account on Google Cloud Platform. You can create one through this [documentation](https://cloud.google.com/free). You can download and install the Google CLI `gcloud` by checking this [document](https://cloud.google.com/sdk/docs/install).
+This lab runs on any K8s cluster with few adjusts on the ingresses, we recommend using a free trial account on the Google Cloud Platform. You can create one through this [documentation](https://cloud.google.com/free). You can download and install the Google CLI `gcloud` by checking this [document](https://cloud.google.com/sdk/docs/install).
+
+Alternatively, you can create one through this [documentation](https://azure.microsoft.com/free/). You can download and install the Google CLI `az` by checking this [document](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli).
+
+#### Google Kubernetes Engine
 
 In case you use a GCP account for this lab, we provided the Google Kubernetes Engine (GKE) recommended configuration below:
 
@@ -38,7 +42,7 @@ In case you use a GCP account for this lab, we provided the Google Kubernetes En
 | GKE mode | `Standard with static K8s version` |
 | Location type | `Zonal` |
 | Release channel | `None` |
-| Kubernetes version | `1.23.9-gke.900` |
+| Kubernetes version | `1.24.x` |
 | Number of nodes | `3` |
 | Machine type | `e2-standard-2` |
 | Image type | `cos_containerd` |
@@ -50,7 +54,7 @@ You can create a K8s cluster for this lab with the following commands:
 
 ```shell
 gcloud auth login
-gcloud container clusters create cluster-1 --no-enable-autoupgrade --enable-service-externalips --enable-kubernetes-alpha --region=<your_closest_region> --cluster-version=1.23.9-gke.900 --machine-type=e2-standard-2 --monitoring=NONE
+gcloud container clusters create cluster-1 --no-enable-autoupgrade --enable-service-externalips --enable-kubernetes-alpha --region=<your_closest_region> --cluster-version=<k8s_version> --machine-type=e2-standard-2 --monitoring=NONE
 ```
 
 * kubectl configuration
@@ -59,6 +63,43 @@ You can configure your local `kubectl` environment and credentials with the foll
 
 ```shell
 gcloud container clusters get-credentials cluster-1 --zone <your_closest_region> --project <your_project_id>
+```
+
+#### Azure Kubernetes Services
+
+In case you use a Azure account for this lab, we provided the Azure Kubernetes Services (AKS) recommended configuration below:
+
+* GKE Configuration
+
+| **Parameter** | **Value** |
+|:--------------------------------|:--------------------------------|
+| AKS SKU | `Basic`, `Free` |
+| Type | `Microsoft.ContainerService/ManagedClusters` |
+| Location | `East US` (closest to you`) |
+| Auto Upgrade Type | `Disabled` |
+| Kubernetes version | `1.24.x` |
+| Node pools | `1 node pool` |
+| Node size | `Standard_B4ms` |
+| Network type | `Kubenet` |
+| Network policy | `calico` |
+| | |
+
+* AKS cluster creation
+
+You can create a K8s cluster for this lab with the following commands:
+
+```shell
+az login
+az account set --subscription <your_subscription_id>
+az aks create -g <your_resource_group_name> -n cluster-1 --auto-upgrade-channel none --network-plugin kubenet --network-policy calico --location <your_closest_location> --node-vm-size Standard_B4ms --kubernetes-version <1.24.x> 
+```
+
+* kubectl configuration
+
+You can configure your local `kubectl` environment and credentials with the following command:
+
+```shell
+az aks get-credentials --resource-group <your_resource_group_name> --name cluster-1
 ```
 
 ### Contents
