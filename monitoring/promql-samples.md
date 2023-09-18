@@ -11,7 +11,8 @@ _Prometheus provides a functional query language called PromQL (Prometheus Query
 ### Containers / Pod
 
 * Per-pod sum of CPU usage in seconds (`container_name` only works for Docker runtime engine)
-```
+
+```promql
 sum by (pod_name) (
   rate(container_cpu_usage_seconds_total{container_name!="POD"}[5m])
 )
@@ -24,7 +25,7 @@ container_memory_usage_bytes{namespace="default",image!="k8s.gcr.io/pause:3.5",n
 
 * Per-pod CPU usage in percentage (the query doesn't return CPU usage for pods without CPU limits)
 
-```
+```promql
 100 * max(
   rate(container_cpu_usage_seconds_total[5m])
     / on (container, pod)
@@ -36,7 +37,7 @@ container_memory_usage_bytes{namespace="default",image!="k8s.gcr.io/pause:3.5",n
 
 * Average duration times per instance
 
-```
+```promql
 avg(probe_duration_seconds) by (instance)
 ```
 
