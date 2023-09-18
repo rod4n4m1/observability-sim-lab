@@ -19,7 +19,8 @@ sum by (pod_name) (
 ```
 
 * Per-pod memory usaga in Megabytes
-```
+
+```promql
 container_memory_usage_bytes{namespace="default",image!="k8s.gcr.io/pause:3.5",name!=""} / (1024*1024)
 ```
 
@@ -43,7 +44,7 @@ avg(probe_duration_seconds) by (instance)
 
 * 90th quantile for the HTTP resolve time in ms for a certain instance
 
-```
+```promql
 quantile_over_time(
   0.90,
   probe_http_duration_seconds{instance="http://35.198.13.1:60000/fortune",phase="resolve"}[28d]
